@@ -18,7 +18,7 @@ module JsonApi.Document
     -- * Resource object
     , ResourceData (..)
     , ResourceObject (..)
-    -- * Relatiomships
+    -- * Relationships
     , Relationship (..)
     , ResourceLinkage
     , -- * Meta data

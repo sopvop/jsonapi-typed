@@ -89,11 +89,12 @@
 --
 -- == Using it
 --
+-- @
 -- getBookResource :: BookId -> 'Include' -> 'FieldsFilter' -> DatabaseM Document
 -- getBookResource bookId whatToInclude fieldSet = do
 --   book <- getBook bookId
 --   'serialiseDocument' (Proxy :: Proxy BookResource) book whatToInclude fieldSet
---
+-- @
 --
 module JsonApi.Relationships
     ( -- * Defining resources
