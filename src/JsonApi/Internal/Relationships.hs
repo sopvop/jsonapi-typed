@@ -124,10 +124,7 @@ class Monad m => FetchRelationship m r a where
                     -> r
                     -> m ((Text, Relationship), Endo Included)
 
-doFetchRelationship :: ( IsResource a
-                       , HasResourceId a
-                       , KnownSymbol nm
-                       , FetchRelated m r nm a
+doFetchRelationship :: ( FetchRelated m r nm a
                        , SerialiseResource m (Resource a relationships))
     => forall proxy . proxy (Rel nm a)
     -> proxy (Resource a relationships)
@@ -144,19 +141,17 @@ doFetchRelationship thisProxy kidsProxy fetchMode includeMode a = do
     where
 
 
-instance ( IsResource a
-         , HasResourceId a
-         , KnownSymbol nm
+instance ( KnownSymbol nm
          , FetchRelated m r nm a
-         , related ~ Resource a relationships
          , SerialiseResource m (Resource a relationships) )
     => FetchRelationship m r (Rel nm (Resource a relationships)) where
   fetchRelationship _ env a = do
-    (r, includes) <- doFetchRelationship (Proxy :: Proxy (Rel nm a))
-                                         (Proxy :: Proxy related)
-                                         fetchMode
-                                         includeMode
-                                         a
+    (r, includes) <- doFetchRelationship
+                     (Proxy :: Proxy (Rel nm a))
+                     (Proxy :: Proxy (Resource a relationships))
+                     fetchMode
+                     includeMode
+                     a
     pure ((textName, r), includes)
 
     where
@@ -168,19 +163,18 @@ instance ( IsResource a
                   then FetchRelationship
                   else FetchIncluded
 
-instance ( IsResource a
-         , HasResourceId a
-         , KnownSymbol nm
+instance ( KnownSymbol nm
          , FetchRelated m r nm a
          , related ~ Resource a relationships
          , SerialiseResource m (Resource a relationships))
     => FetchRelationship m r (RelInclude nm (Resource a relationships)) where
   fetchRelationship _ env a = do
-    (r, includes) <- doFetchRelationship (Proxy :: Proxy (Rel nm a))
-                                         (Proxy :: Proxy related)
-                                         fetchMode
-                                         includeMode
-                                         a
+    (r, includes) <- doFetchRelationship
+                     (Proxy :: Proxy (Rel nm a))
+                     (Proxy :: Proxy (Resource a relationships))
+                     fetchMode
+                     includeMode
+                     a
     pure ((textName, r), includes)
     where
       textName = Text.pack $ symbolVal (Proxy :: Proxy nm)
